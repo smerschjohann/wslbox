@@ -14,7 +14,7 @@ RUN apt-get install -y fzf zsh vim p7zip btop jq golang socat python-is-python3
 # TODO no kubectl (except k3s version)
 
 COPY --chown=0:0 system_files/common /
-COPY --chown=0:0 system_files/ubuntu /
+#COPY --chown=0:0 system_files/ubuntu /
 RUN chmod u+rwx /usr/sbin/*
 RUN systemctl enable mount-home.service
 

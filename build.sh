@@ -1,9 +1,11 @@
 #!/bin/bash
 
+set -eo pipefail
+
 function build_data {
     buildah rm devdata || true
     buildah from --name devdata busybox:latest
-    buildah unshare --mount devdata sh -c 'tar -czvf wsl-data.tar.gz -C $devdata .'
+    buildah unshare --mount devdata sh -c 'tar -czf wsl-data.tar.gz -C $devdata .'
     buildah rm devdata
 }
 
@@ -22,7 +24,7 @@ function build_wsl {
 
     buildah bud --layers --format=docker -f "docker/${variant}/Dockerfile" -t "devbox-${variant}:latest" .
     buildah from --name devdevdev "localhost/devbox-${variant}:latest"
-    buildah unshare --mount devdevdev sh -c 'tar -czvf devbox-'"${variant}"'-wsl.tar.gz -C $devdevdev .'
+    buildah unshare --mount devdevdev sh -c 'tar -czf devbox-'"${variant}"'-wsl.tar.gz -C $devdevdev .'
     buildah rm devdevdev
 }
 
@@ -92,7 +94,7 @@ case "$1" in
         devbox "$2"
         ;;
     *)
-        echo "Usage: $0 {build_data|reset_build_data|build_wsl|import_wsl|build_import|delete_build_import|build_wsl_compressed|delete_devbox|devbox} [args]"
+        echo "Usage: $0 {build_data|reset_build_data|build_wsl|import_wsl|build_import|delete_build_import|build_wsl_compressed|delete_devbox|devbox} [args]";
         exit 1
         ;;
 esac

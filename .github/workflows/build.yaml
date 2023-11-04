@@ -10,31 +10,28 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro: [fedora, ubuntu]
 
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
     - name: Build data
+      if: ${{ matrix.distro == 'fedora' }}
       run: ./build.sh build_data
 
-    - name: Build Fedora WSL
-      run: ./build.sh build_wsl fedora
-
-    - name: Build Ubuntu WSL
-      run: ./build.sh build_wsl ubuntu
-
     - name: Upload Data Distribution to Release
+      if: ${{ matrix.distro == 'fedora' }}
       run: gh release upload ${{ github.ref_name }} wsl-data.tar.gz --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload Fedora Artifact to Release
-      run: gh release upload ${{ github.ref_name }} devbox-fedora-wsl.tar.gz --clobber
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build WSL ${{ matrix.distro }}
+      run: ./build.sh build_wsl ${{ matrix.distro }}
 
-    - name: Upload Ubuntu Artifact to Release
-      run: gh release upload ${{ github.ref_name }} devbox-ubuntu-wsl.tar.gz --clobber
+    - name: Upload Artifact to Release
+      run: gh release upload ${{ github.ref_name }} devbox-${{ matrix.distro }}-wsl.tar.gz --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
