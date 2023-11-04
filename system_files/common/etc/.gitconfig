@@ -1,0 +1,34 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+#    name = name surname
+#    email = name@domain.tld
+
+[init]
+    defaultBranch = main
+
+[alias]
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+    la = !git config -l | grep alias | cut -c 7- 
+    pushd = push -u origin HEAD
+
+#[http "https://SOME_URL.tld"]
+#        proxy = http://127.0.0.1:3128
+#       sslVerify = false
+
+[credential]
+    helper = store --file ~/.git-credentials
+
+[core]
+    autocrlf = false
+    editor = code --wait
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[difftool]
+    prompt = false

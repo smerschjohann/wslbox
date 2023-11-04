@@ -1,0 +1,10 @@
+[Unit]
+Description=Mount Home Script
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/mount-home.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,7 @@
+
+# Kubernetes nice to have:
+
+# generate kubeconfigs per session 
+#export KUBECONFIG=$HOME/.kube/generated-config-$RANDOM
+#sudo KUBECONFIG=/etc/rancher/k3s/k3s.yaml:$HOME/.kube/kubeconfig-auth:$HOME/.kube/config-private kubectl config view --flatten | sed -e 's:default:k3s-local:g' > $KUBECONFIG
+#find $HOME/.kube -type f -mtime +7 -iname "generated-config-*" -exec rm {} \;

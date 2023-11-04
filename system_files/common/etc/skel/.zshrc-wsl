@@ -1,0 +1,47 @@
+# WSL specific
+
+export PATH="$PATH:/mnt/c/Windows/system32"
+alias powershell=/mnt/c/Windows/System32/WindowsPowerShell/v1.0//powershell.exe
+
+# prevent slowdown of network
+# https://github.com/microsoft/WSL/issues/4901
+sudo ethtool -K eth0 tso off
+
+HOST_IP=$(route.exe print | grep "0.0.0.0          0.0.0.0" | awk '{print $4}')
+
+# use ssh-agent from windows (pageant) 
+export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
+ssh-add -l > /dev/null 2> /dev/null
+if [ $? -ne 0 ] ; then
+    rm -f $SSH_AUTH_SOCK
+    wsl2_ssh_pageant_bin="$HOME/.ssh/wsl2-ssh-pageant.exe"
+    if [ ! -f "$wsl2_ssh_pageant_bin" ]; then
+        mkdir -p ~/.ssh
+        WINHOME=$(wslpath $(powershell Write-Output '$env:USERPROFILE') | tr -d '\r')
+        profile_tools="$WINHOME/tools"
+        echo "tool folder: $profile_tools"
+        mkdir -p $profile_tools
+        windows_destination="${profile_tools}/wsl2-ssh-pageant.exe"
+        curl -Lo "$windows_destination" "https://github.com/BlackReloaded/wsl2-ssh-pageant/releases/latest/download/wsl2-ssh-pageant.exe"
+        ln -s $windows_destination $wsl2_ssh_pageant_bin
+    fi
+    
+    (setsid nohup socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"$wsl2_ssh_pageant_bin" >/dev/null 2>&1 &)
+fi
+
+# run if you have memory problems
+function wsl2_compact {
+    echo 1 | sudo tee /proc/sys/vm/drop_caches
+    sleep 1
+    echo 1 | sudo tee /proc/sys/vm/compact_memory
+}
+
+# clipboard tools
+alias clip="clip.exe"
+function cliptee { tee >(clip.exe) }
+alias clippaste="powershell Get-Clipboard | sed 's/\r//'"
+alias explorer=explorer.exe
+alias wsl=wsl.exe
+alias cmd=cmd.exe
+
+

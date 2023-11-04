@@ -1,0 +1,40 @@
+name: Build WSL Images
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Build data
+      run: ./build.sh build_data
+
+    - name: Build Fedora WSL
+      run: ./build.sh build_wsl fedora
+
+    - name: Build Ubuntu WSL
+      run: ./build.sh build_wsl ubuntu
+
+    - name: Upload Data Distribution to Release
+      run: gh release upload ${{ github.ref_name }} wsl-data.tar.gz --clobber
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Fedora Artifact to Release
+      run: gh release upload ${{ github.ref_name }} devbox-fedora-wsl.tar.gz --clobber
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Ubuntu Artifact to Release
+      run: gh release upload ${{ github.ref_name }} devbox-ubuntu-wsl.tar.gz --clobber
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
