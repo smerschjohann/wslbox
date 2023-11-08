@@ -22,7 +22,7 @@ function build_wsl {
     local variant=$1
     rm "devbox-${variant}-wsl.tar" || true
 
-    buildah bud --layers --format=docker -f "docker/${variant}/Dockerfile" -t "devbox-${variant}:latest" .
+    buildah bud --format=docker -f "docker/${variant}/Dockerfile" -t "devbox-${variant}:latest" .
     buildah from --name devdevdev "localhost/devbox-${variant}:latest"
     buildah unshare --mount devdevdev sh -c 'tar -czf devbox-'"${variant}"'-wsl.tar.gz -C $devdevdev .'
     buildah rm devdevdev

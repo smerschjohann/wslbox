@@ -51,5 +51,8 @@ RUN dnf install -y java-1.8.0-openjdk-devel maven-openjdk8
 # todo helmfile bw
 # https://github.com/bitwarden/clients/releases/download/cli-v2023.9.0/bw-linux-2023.9.0.zip
 
+# fix capabilities
+RUN rpm --setcaps shadow-utils
+
 # final cleanup
 RUN dnf clean all && rm -rf /var/cache/yum
