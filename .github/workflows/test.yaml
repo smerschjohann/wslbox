@@ -1,0 +1,30 @@
+name: Build WSL Images on Branches
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!main'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro: [fedora, ubuntu]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Build WSL ${{ matrix.distro }}
+      run: ./build.sh build_wsl ${{ matrix.distro }}
+
+    - name: Upload Artifact as Temporary Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: devbox-${{ matrix.distro }}
+        path: devbox-${{ matrix.distro }}-wsl.tar.gz

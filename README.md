@@ -37,4 +37,9 @@ wsl.exe -t devbox
 
 # now you can start it, the installation is complete
 wsl.exe -d devbox
+
+# if this is the first run, the ZSH shell will still download modules, you have to quit and start once more to have the final shell
+
+# (optional) to set the devbox as default:
+wsl.exe -s devbox
 ```

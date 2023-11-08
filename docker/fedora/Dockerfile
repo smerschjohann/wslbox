@@ -1,10 +1,10 @@
-FROM registry.fedoraproject.org/fedora-toolbox:38 as devbox
+FROM registry.fedoraproject.org/fedora-toolbox:39 as devbox
 
 # NOTE:
 # the amount of layers is not important! We export it as a flat filesystem tarball. 
 # So feel free to add as many layers as you want
 
-RUN dnf install -y systemd docker cracklib-dicts
+RUN dnf install -y systemd docker podman buildah cracklib-dicts
 RUN dnf install -y distrobox fzf zsh vim btop jq golang socat just age moreutils
 RUN dnf install -y tcpdump ethtool
 
