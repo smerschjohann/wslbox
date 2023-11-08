@@ -24,5 +24,8 @@ if ! grep -q "/mnt/wsl/data" /proc/mounts; then
     done
 fi
 
+# mount as sharable for podman etc.
+mount --make-rshared /
+
 mkdir -p /mnt/wsl/data/home
 mount -o bind /mnt/wsl/data/home /home

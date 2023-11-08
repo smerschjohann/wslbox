@@ -2,6 +2,9 @@
 
 set -eo pipefail
 
+# (on fedora) restore permissions and capabilities for all files
+rpm -a --restore || true
+
 # Prompt for username and insist it's not empty
 while true; do
     read -p "Please enter your username: " username
