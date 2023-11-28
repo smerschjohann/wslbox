@@ -40,6 +40,7 @@ RUN echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf
 
 # java 8 development
 RUN dnf install -y java-1.8.0-openjdk-devel maven-openjdk8
+RUN dnf install -y ipcalc pwgen java-11-openjdk
 
 # todo helmfile bw
 # https://github.com/bitwarden/clients/releases/download/cli-v2023.9.0/bw-linux-2023.9.0.zip
