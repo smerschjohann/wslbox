@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-toolbox:39 as devbox
+FROM registry.fedoraproject.org/fedora-toolbox:40 as devbox
 
 # NOTE:
 # the amount of layers is not important! We export it as a flat filesystem tarball. 
@@ -38,9 +38,7 @@ RUN mkdir -p /usr/lib/binfmt.d
 RUN echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf
 #RUN systemctl restart systemd-binfmt
 
-# java 8 development
-RUN dnf install -y java-1.8.0-openjdk-devel maven-openjdk8
-RUN dnf install -y ipcalc pwgen java-11-openjdk
+RUN dnf install -y ipcalc pwgen java-17-openjdk
 
 # todo helmfile bw
 # https://github.com/bitwarden/clients/releases/download/cli-v2023.9.0/bw-linux-2023.9.0.zip
