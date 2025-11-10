@@ -6,7 +6,8 @@ RUN apt-get -y update
 RUN apt-get -y install systemd sudo tcpdump ethtool fzf zsh vim p7zip btop jq golang socat python-is-python3
 
 COPY --chown=0:0 system_files/common /
-RUN chmod u+rwx /usr/sbin/*
+RUN ln -s /usr/bin/devbox-init.sh /usr/sbin/devbox-init.sh && ln -s /usr/bin/mount-home.sh /usr/sbin/mount-home.sh
+RUN chmod u+rwx /usr/bin/devbox-init.sh /usr/bin/mount-home.sh
 RUN systemctl enable mount-home.service
 
 RUN apt-get -y update \
