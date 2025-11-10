@@ -2,8 +2,12 @@
 
 set -eo pipefail
 
-# (on fedora) restore permissions and capabilities for all files
-rpm -a --restore || true
+DISTRO=$(. /etc/os-release && echo $ID)
+
+# restore permissions and capabilities for all files on fedora
+if [[ "$DISTRO" == "fedora" ]]; then
+    rpm -a --restore
+fi
 
 # Prompt for username and insist it's not empty
 while true; do
@@ -19,11 +23,14 @@ done
 
 echo "Welcome, $username!"
 
-if [  -n "$(grep NAME /etc/os-release | grep Ubuntu)" ]; then
-    useradd -m -G sudo,docker -s /usr/bin/zsh $username
-else
-    useradd -m -G wheel,docker -s /usr/bin/zsh $username
-fi
+case "${DISTRO}" in
+    ubuntu|debian)
+        useradd -m -G sudo,docker -s /usr/bin/zsh "$username"
+        ;;
+    fedora)
+        useradd -m -G wheel,docker -s /usr/bin/zsh "$username"
+        ;;
+esac
 
 
 passwd $username
