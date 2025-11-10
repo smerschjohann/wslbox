@@ -3,9 +3,10 @@
 set -eo pipefail
 
 DISTRO=$(. /etc/os-release && echo $ID)
-# (on fedora) restore permissions and capabilities for all files
+
+# restore permissions and capabilities for all files on fedora
 if [[ "$DISTRO" == "fedora" ]]; then
-    rpm -a --restore || true
+    rpm -a --restore
 fi
 
 # Prompt for username and insist it's not empty
