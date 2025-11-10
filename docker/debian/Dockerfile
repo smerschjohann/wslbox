@@ -1,33 +1,26 @@
-FROM debian:13
+FROM debian:trixie
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update
-RUN apt-get install -y systemd sudo tcpdump ethtool
-RUN apt-get install -y fzf zsh vim p7zip btop jq golang socat python-is-python3
+RUN apt-get -y update
+RUN apt-get -y install systemd sudo tcpdump ethtool fzf zsh vim p7zip btop jq golang socat python-is-python3
 
 COPY --chown=0:0 system_files/common /
 RUN chmod u+rwx /usr/sbin/*
 RUN systemctl enable mount-home.service
 
-# docker support, from the official docker website
-# Add Docker's official GPG key:
-RUN sudo apt-get -y update
-RUN sudo apt-get -y install ca-certificates curl
-RUN sudo install -m 0755 -d /etc/apt/keyrings
-RUN sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-RUN sudo chmod a+r /etc/apt/keyrings/docker.asc
+RUN apt-get -y update \
+ && apt-get -y install --no-install-recommends ca-certificates curl gnupg lsb-release \
+ && install -m 0755 -d /etc/apt/keyrings \
+ && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+ && chmod a+r /etc/apt/keyrings/docker.gpg
 
-# Add the repository to Apt sources:
-RUN sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
-Types: deb
-URIs: https://download.docker.com/linux/debian
-Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
-Components: stable
-Signed-By: /etc/apt/keyrings/docker.asc
-EOF
+ # trixie is not available, booksworm works
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable" > /etc/apt/sources.list.d/docker.list
 
-RUN sudo apt-get -y update
+RUN apt-get -y update \
+ && apt-get -y install --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
+ && rm -rf /var/lib/apt/lists/*
 
 # k3s installed, but disabled by default. You can start it by systemctl start k3s. It uses docker mode 
 RUN curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true INSTALL_K3S_SKIP_ENABLE=true INSTALL_K3S_EXEC="server --docker --disable traefik --write-kubeconfig-mode 644" sh -s - 
