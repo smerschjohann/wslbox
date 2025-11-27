@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        distro: [fedora, ubuntu]
+        distro: [fedora, ubuntu, debian]
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
     - name: Build data
       if: ${{ matrix.distro == 'fedora' }}

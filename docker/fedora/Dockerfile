@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-toolbox:40 as devbox
+FROM registry.fedoraproject.org/fedora-toolbox:43 as devbox
 
 # NOTE:
 # the amount of layers is not important! We export it as a flat filesystem tarball. 
@@ -12,12 +12,10 @@ RUN dnf install -y e2fsprogs-libs libXrender libXtst freetype
 RUN dnf install rsms-inter-fonts.noarch fira-code-fonts.noarch -y
 
 COPY --chown=0:0 system_files/common /
-COPY --chown=0:0 system_files/fedora /
-RUN chmod u+rwx /usr/sbin/*
+RUN chmod u+rwx /usr/bin/devbox-init.sh /usr/bin/mount-home.sh
 RUN systemctl enable mount-home.service
 
-# install rpms from new repos, disable the ones only temporary needed
-RUN dnf install -y kubectl && dnf config-manager --disable kubernetes
+RUN dnf install -y kubectl
 
 # buildkit support
 RUN mkdir -p /usr/lib/docker/cli-plugins/; \
@@ -31,17 +29,14 @@ RUN sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 RUN curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true INSTALL_K3S_SKIP_ENABLE=true INSTALL_K3S_EXEC="server --disable traefik --write-kubeconfig-mode 644" sh -s - 
 
 # some container utils
-RUN curl -L https://github.com/google/go-containerregistry/releases/download/v0.16.1/go-containerregistry_Linux_x86_64.tar.gz | tar xzf - -C /usr/local/bin/ crane gcrane
+RUN curl -L https://github.com/google/go-containerregistry/releases/download/v0.20.6/go-containerregistry_Linux_x86_64.tar.gz | tar xzf - -C /usr/local/bin/ crane gcrane
 RUN chmod a+x /usr/local/bin/*
 
 RUN mkdir -p /usr/lib/binfmt.d
 RUN echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf
 #RUN systemctl restart systemd-binfmt
 
-RUN dnf install -y ipcalc pwgen java-17-openjdk
-
-# todo helmfile bw
-# https://github.com/bitwarden/clients/releases/download/cli-v2023.9.0/bw-linux-2023.9.0.zip
+RUN dnf install -y ipcalc pwgen java-21-openjdk
 
 # final cleanup
 RUN dnf clean all && rm -rf /var/cache/yum

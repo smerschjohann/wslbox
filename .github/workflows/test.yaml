@@ -14,17 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        distro: [fedora, ubuntu]
+        distro: [fedora, ubuntu, debian]
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
     - name: Build WSL ${{ matrix.distro }}
       run: ./build.sh build_wsl ${{ matrix.distro }}
 
     - name: Upload Artifact as Temporary Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v5
       with:
         name: devbox-${{ matrix.distro }}
         path: devbox-${{ matrix.distro }}-wsl.tar.gz

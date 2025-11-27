@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # NOTE:
 # the amount of layers is not important! We export it as a flat filesystem tarball. 
@@ -14,8 +14,8 @@ RUN apt-get install -y fzf zsh vim p7zip btop jq golang socat python-is-python3
 # TODO no kubectl (except k3s version)
 
 COPY --chown=0:0 system_files/common /
-#COPY --chown=0:0 system_files/ubuntu /
-RUN chmod u+rwx /usr/sbin/*
+RUN ln -s /usr/bin/devbox-init.sh /usr/sbin/devbox-init.sh && ln -s /usr/bin/mount-home.sh /usr/sbin/mount-home.sh
+RUN chmod u+rwx /usr/bin/devbox-init.sh /usr/bin/mount-home.sh
 RUN systemctl enable mount-home.service
 
 # docker support
@@ -34,8 +34,8 @@ RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugi
 RUN curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true INSTALL_K3S_SKIP_ENABLE=true INSTALL_K3S_EXEC="server --docker --disable traefik --write-kubeconfig-mode 644" sh -s - 
 
 # some container utils
-RUN curl -L https://github.com/google/go-containerregistry/releases/download/v0.16.1/go-containerregistry_Linux_x86_64.tar.gz | tar xzf - -C /usr/local/bin/ crane gcrane
-RUN curl -L https://github.com/casey/just/releases/download/1.14.0/just-1.14.0-x86_64-unknown-linux-musl.tar.gz | tar xzf - -C /usr/local/bin/ just
+RUN curl -L https://github.com/google/go-containerregistry/releases/download/v0.20.6/go-containerregistry_Linux_x86_64.tar.gz | tar xzf - -C /usr/local/bin/ crane gcrane
+RUN curl -L https://github.com/casey/just/releases/download/1.43.0/just-1.43.0-x86_64-unknown-linux-musl.tar.gz | tar xzf - -C /usr/local/bin/ just
 
 RUN chmod a+x /usr/local/bin/*
 
